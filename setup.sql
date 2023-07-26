@@ -1,0 +1,8 @@
+CREATE TABLE users (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    pw_hash VARCHAR(40) NOT NULL,
+    nickname VARCHAR(50) NOT NULL,
+    account INTEGER NOT NULL,
+    sign_in_date DATE NOT NULL
+);
