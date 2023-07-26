@@ -13,7 +13,7 @@ def main():
         [sg.Button('Submit', key='-SUBMIT-'),sg.Button('CANCEL')]
 
     ]
-    window = sg.Window("Sign In",layout= layout)
+    window = sg.Window("Sign In",layout= layout,size=(300,200),finalize=True)
 
     email_add = 'example@gmail.com'
     pw1 = 0;
@@ -23,14 +23,15 @@ def main():
         event, values = window.read()
         if event == sg.WIN_CLOSED or event == 'CANCEL':
             break
+        
         elif event == '-CHECK_AVAIL-':
-            if is_email_valid(values['-EMAIL-']):
+            isAvailable = is_email_valid(values['-EMAIL-'])
+            email_add = values['-EMAIL-']
+            if isAvailable:
                 window['-READY_TEXT-'].update('you can use this email', text_color = 'Green')
-                isAvailable = True
-                email_add = values['-EMAIL-']
             else:
                 window['-READY_TEXT-'].update('enter another email', text_color = 'Red')
-                isAvailable = False
+
         elif event == '-SUBMIT-':
             pw1, pw2 = values['-PASSWORD-'],values['-PASSWORD_CHECK-']
             if is_password_valid(pw1,pw2):

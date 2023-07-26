@@ -8,7 +8,7 @@ def main():
         [sg.Button('OK',key='-SUBMIT-'),sg.Button('CANCEL')]
     ]
 
-    window = sg.Window("log in",layout= layout)
+    window = sg.Window("log in",layout= layout,size=(400,100),finalize=True)
 
     while True:
         event, values = window.read()

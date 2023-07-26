@@ -4,11 +4,11 @@ import sign_in_page, log_in_page, lobby_page
 
 def main():
     layout = [
-        [sg.Text("WELCOME TO CASINO AGAIN!")],
+        [sg.Text("WELCOME TO CASINO AGAIN!",size=400,justification='center')],
         [sg.Button('Log in',key='-LOG_IN-'),sg.Button('Sign in',key='-SIGN_IN-')]
     ]
 
-    window = sg.Window("CASINO AGAIN!.exe",layout= layout)
+    window = sg.Window("CASINO AGAIN!.exe",layout= layout,size=(400,200),finalize=True)
 
     while True:
         event, values = window.read()
