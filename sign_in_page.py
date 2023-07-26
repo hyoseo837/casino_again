@@ -1,60 +1,6 @@
-import psycopg2
 import PySimpleGUI as sg
-import hashlib
-
-
-def create_database_connection():
-    try:
-        connection = psycopg2.connect(
-            database="casino_again",
-            user="postgres",
-            password="14511461",
-            host="localhost",
-            port='5432'
-        )
-        return connection
-    except psycopg2.OperationalError as e:
-        sg.popup("Database connection error:", str(e))
-        return None
-
-def is_email_available(email):
-    if not('@' in email and '.' in email):
-        return False
-    else:
-        connection = create_database_connection()
-
-        cursor_obj = connection.cursor()
-        quary = "SELECT * FROM users WHERE email = '" + email + "';"
-        cursor_obj.execute(quary)
-        result = cursor_obj.fetchall()
-        cursor_obj.close()
-        connection.close()
-        if result == []:
-            return True
-        else:
-            return False
-     
-def add_to_database(name, email,hashed_pw):
-    connection = create_database_connection()
-    cursor_obj = connection.cursor()
-    quary = f"INSERT INTO users (nickname, email, pw_hash, account, sign_in_date) VALUES ('{name}','{email}','{hashed_pw}', 500, NOW()::DATE);"
-    cursor_obj.execute(quary)
-    connection.commit()
-    cursor_obj.close()
-    connection.close()
-
-def register_user(isAvailable,name, email, password):
-    if not isAvailable:
-        sg.popup('The email is not available or invalid.', text_color='red')
-        return False
-    if len(name)>50:
-        sg.popup('your nickname is too long', text_color='red')
-        return False
-
-    hashed_pw = hashlib.sha1(password.encode("utf-8")).hexdigest()
-    add_to_database(name,email, hashed_pw);
-    return True
-
+from database_operations import register_user
+from check_validity import *
 
 def main():
     isAvailable = False;
@@ -78,23 +24,28 @@ def main():
         if event == sg.WIN_CLOSED or event == 'CANCEL':
             break
         elif event == '-CHECK_AVAIL-':
-            email = values['-EMAIL-']
-            if is_email_available(email):
+            if is_email_valid(values['-EMAIL-']):
                 window['-READY_TEXT-'].update('you can use this email', text_color = 'Green')
                 isAvailable = True
-                email_add = email
+                email_add = values['-EMAIL-']
             else:
                 window['-READY_TEXT-'].update('enter another email', text_color = 'Red')
                 isAvailable = False
         elif event == '-SUBMIT-':
-            pw1 = values['-PASSWORD-']
-            pw2 = values['-PASSWORD_CHECK-']
-            if pw1 == pw2:
-                if register_user(isAvailable, values['-NAME-'],email_add,pw1):
-                    sg.popup("User registered successfully!")
-                    break
+            pw1, pw2 = values['-PASSWORD-'],values['-PASSWORD_CHECK-']
+            if is_password_valid(pw1,pw2):
+                if isAvailable:
+                    name = values['-NAME-']
+                    if not is_name_valid:
+                        sg.popup('invalid nickname')
+                    else:
+                        register_user(name,email_add,pw1)
+                        sg.popup("User registered successfully!")
+                        break
+                else:
+                    sg.popup("invalid email")
             else:
-                sg.popup("Please Recheck the passwords")
+                sg.popup("invalid password")
 
     window.close()
 

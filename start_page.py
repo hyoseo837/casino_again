@@ -1,23 +1,28 @@
 import PySimpleGUI as sg
-import sign_in_page, log_in_page
+import sign_in_page, log_in_page, lobby_page
 
-islogged = False
 
-sg.theme('dark grey 9')
-layout = [
-    [sg.Text("WELCOME TO CASINO AGAIN!")],
-    [sg.Button('Log in',key='-LOG_IN-'),sg.Button('Sign in',key='-SIGN_IN-')]
-]
+def main():
+    layout = [
+        [sg.Text("WELCOME TO CASINO AGAIN!")],
+        [sg.Button('Log in',key='-LOG_IN-'),sg.Button('Sign in',key='-SIGN_IN-')]
+    ]
 
-window = sg.Window("CASINO AGAIN!.exe",layout= layout)
+    window = sg.Window("CASINO AGAIN!.exe",layout= layout)
 
-while True:
-    event, values = window.read()
-    if event == sg.WIN_CLOSED:
-        break
-    elif event == '-SIGN_IN-':
-        sign_in_page.main()
-    elif event == '-LOG_IN-':
-        log_in_page.main()
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED:
+            break
+        elif event == '-SIGN_IN-':
+            sign_in_page.main()
+        elif event == '-LOG_IN-':
+            user_id = log_in_page.main()
+            if user_id:
+                window.close()
+                lobby_page.main(user_id)
 
-window.close()
+    window.close()
+
+if __name__ == "__main__":
+    main()
