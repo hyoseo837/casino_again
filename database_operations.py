@@ -26,6 +26,18 @@ def register_user(name, email, password):
     cursor_obj.close()
     connection.close()
 
+def update_money(email,money):
+    connection = create_database_connection()
+    if type(connection) == str:
+        return None
+    cursor_obj = connection.cursor()
+    quary = f"UPDATE users SET account = {money} WHERE email = '{email}';"
+    cursor_obj.execute(quary)
+    connection.commit()
+    cursor_obj.close()
+    connection.close()
+
+
 def check_password(email,password):
     result = fetch_data_by_email(email)
     if result == None:
@@ -41,13 +53,13 @@ def check_password(email,password):
 
     
 def fetch_data_by_email(email):
-    conn=create_database_connection()
-    if type(conn) == str:
+    connection=create_database_connection()
+    if type(connection) == str:
         return None
-    cursor_obj = conn.cursor()
+    cursor_obj = connection.cursor()
     quary = "SELECT * FROM users WHERE email = '" + email + "';"
     cursor_obj.execute(quary)
     result = cursor_obj.fetchall()
     cursor_obj.close()
-    conn.close()
+    connection.close()
     return result

@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
-from database_operations import fetch_data_by_email
+from database_operations import fetch_data_by_email,update_money
+import slot_machine
 
 def main(email):
     user_data = fetch_data_by_email(email)[0]
@@ -21,7 +22,7 @@ def main(email):
     # Define the layout of the lobby page
     layout = [
         [sg.Text("Welcome to the Casino Game Lobby!", font=("Helvetica", 20),justification='center')],
-        [sg.Text(f"your name is {nickname}",size=50), sg.Text(f"{money} $",justification='right')],
+        [sg.Text(f"your name is {nickname}",size=50), sg.Text(f"{money} $",justification='right',key='-BALANCE-')],
         [sg.Text("Please choose a game to play:", font=("Helvetica", 16))],
     ]
 
@@ -35,10 +36,17 @@ def main(email):
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED:
+            update_money(email,money)
             break
+        elif event == 'Slot Machine':
+            money = slot_machine.main(money)
+            window['-BALANCE-'].update(f"{money} $")
+        elif event == 'Keno':
+            money += 100
+            window['-BALANCE-'].update(f"{money} $")
+
 
     window.close()
 
 if __name__ == "__main__":
     main('example@gmail.com')
-    print('aaa')
